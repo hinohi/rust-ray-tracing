@@ -2,6 +2,14 @@
 
 これ: https://raytracing.github.io/books/RayTracingInOneWeekend.html
 
-## Output ppm image
+## Output image
 
 ![ppm 256x256](./images/image.ppm)
+
+![png 256x256](./images/image.png)
+
+## Background image
+
+![background ppm](./images/background.ppm)
+
+![background png](./images/background.png)

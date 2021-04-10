@@ -2,7 +2,7 @@ mod geo;
 
 use std::io::Write;
 
-use crate::geo::Vector;
+pub use crate::geo::*;
 
 pub type Color = Vector;
 
@@ -39,7 +39,7 @@ impl Ray {
     }
 
     pub fn background(&self) -> Color {
-        let t = self.direction.y() / self.direction.norm();
+        let t = (self.direction.y() / self.direction.norm() + 1.0) * 0.5;
         Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
     }
 }
