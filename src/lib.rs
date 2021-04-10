@@ -1,10 +1,10 @@
+mod geo;
+
 use std::io::Write;
 
-use nalgebra::{Point3, Vector3};
+use crate::geo::Vector;
 
-pub type Vector = Vector3<f64>;
-pub type Point = Point3<f64>;
-pub type Color = Point3<f64>;
+pub type Color = Vector;
 
 pub fn cast_pixel(v: f64) -> u8 {
     if v < 0.0 {
@@ -20,9 +20,26 @@ pub fn write_color<W: Write>(writer: &mut W, color: &Color) -> std::io::Result<(
     writeln!(
         writer,
         "{} {} {}",
-        cast_pixel(color.x),
-        cast_pixel(color.y),
-        cast_pixel(color.z),
+        cast_pixel(color.x()),
+        cast_pixel(color.y()),
+        cast_pixel(color.z()),
     )?;
     Ok(())
+}
+
+#[derive(Debug, Clone)]
+pub struct Ray {
+    pub origin: Vector,
+    pub direction: Vector,
+}
+
+impl Ray {
+    pub fn new(origin: Vector, direction: Vector) -> Ray {
+        Ray { origin, direction }
+    }
+
+    pub fn background(&self) -> Color {
+        let t = self.direction.y() / self.direction.norm();
+        Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
+    }
 }
