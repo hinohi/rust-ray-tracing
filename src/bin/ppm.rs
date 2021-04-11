@@ -9,7 +9,8 @@ fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Sphere], depth: u32) -> 
     }
     for o in objects.iter() {
         if let Some(h) = o.hit(&ray) {
-            let target = h.point + h.normal + Vector::random_in_unit_sphere(rng);
+            let random = Vector::random_in_unit_sphere(rng);
+            let target = h.point + h.normal + random / random.norm();
             let ray = Ray::new(h.point, target - h.point);
             return ray_color(rng, &ray, objects, depth - 1) * 0.5;
         }

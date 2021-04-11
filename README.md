@@ -22,6 +22,8 @@
 
 ## Sphere colored according to its normal vectors
 
+BUG
+
 ![color by normal](./images/normal.ppm)
 
 ![color by normal](./images/normal.png)
@@ -40,6 +42,13 @@
 
 ## Diffuse cut near the camera
 
-![diffuse](./images/diffuse_cut_near.ppm)
+![diffuse cut near](./images/diffuse_cut_near.ppm)
 
-![diffuse](./images/diffuse_cut_near.png)
+![diffuse cut near](./images/diffuse_cut_near.png)
+
+## Lambertian spheres
+
+![Lambertian spheres](./images/lambertian_spheres.ppm)
+
+![Lambertian spheres](./images/lambertian_spheres.png)
+
