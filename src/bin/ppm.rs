@@ -1,6 +1,6 @@
 use std::io::{stdout, Write};
 
-use ray_tracing::{write_color, Ray, Vector};
+use ray_tracing::{write_color, Ray, Sphere, Vector, RED};
 
 fn main() {
     let stdout = stdout();
@@ -22,6 +22,9 @@ fn main() {
     let lower_left_corner =
         origin - horizontal / 2.0 - vertical / 2.0 - Vector::new(0.0, 0.0, focal_length);
 
+    // objects
+    let sphere = Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5);
+
     // render
     writeln!(cout, "P3").unwrap();
     writeln!(cout, "{} {}", width, height).unwrap();
@@ -34,7 +37,11 @@ fn main() {
                 origin,
                 lower_left_corner + horizontal * u + vertical * v - origin,
             );
-            write_color(&mut cout, &r.background()).unwrap();
+            if sphere.is_hit(&r) {
+                write_color(&mut cout, &RED).unwrap();
+            } else {
+                write_color(&mut cout, &r.background()).unwrap();
+            }
         }
     }
 }

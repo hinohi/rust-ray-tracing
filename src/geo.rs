@@ -57,4 +57,8 @@ impl Vector {
     pub fn norm(&self) -> f64 {
         self.norm_squared().sqrt()
     }
+
+    pub fn dot(&self, other: &Vector) -> f64 {
+        self.0 * other.0 + self.1 * other.1 + self.2 * other.2
+    }
 }

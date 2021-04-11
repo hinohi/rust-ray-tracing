@@ -13,3 +13,9 @@
 ![background ppm](./images/background.ppm)
 
 ![background png](./images/background.png)
+
+## Put One Red Sphere
+
+![red sphere](./images/red_sphere.ppm)
+
+![red sphere](./images/red_sphere.png)
