@@ -37,3 +37,9 @@
 ![diffuse](./images/diffuse.ppm)
 
 ![diffuse](./images/diffuse.png)
+
+## Diffuse cut near the camera
+
+![diffuse](./images/diffuse_cut_near.ppm)
+
+![diffuse](./images/diffuse_cut_near.png)

@@ -44,9 +44,9 @@ impl Hit for Sphere {
             return None;
         }
         let mut t = (-b2 - discriminant.sqrt()) / a;
-        if t < 0.0 {
+        if t < 1e-6 {
             t = (-b2 + discriminant.sqrt()) / a;
-            if t < 0.0 {
+            if t < 1e-6 {
                 return None;
             }
         }
