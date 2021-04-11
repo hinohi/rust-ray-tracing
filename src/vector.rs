@@ -98,6 +98,10 @@ impl Vector {
         *self / self.norm()
     }
 
+    pub fn powf(&self, n: f64) -> Vector {
+        Vector(self.0.powf(n), self.1.powf(n), self.2.powf(n))
+    }
+
     pub fn dot(&self, other: &Vector) -> f64 {
         self.0 * other.0 + self.1 * other.1 + self.2 * other.2
     }

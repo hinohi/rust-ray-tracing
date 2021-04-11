@@ -34,7 +34,7 @@ impl Hit for Sphere {
     /// side with the smaller t.
     ///
     /// Note: $\vec{D}\cdot\overrightarrow{CO} < 0$
-    fn hit(&self, ray: &Ray) -> Option<HitPoint> {
+    fn hit(&self, ray: &Ray, t_max: f64) -> Option<HitPoint> {
         let co = ray.origin - self.center;
         let a = ray.direction.norm_squared();
         let b2 = ray.direction.dot(&co);
@@ -44,9 +44,9 @@ impl Hit for Sphere {
             return None;
         }
         let mut t = (-b2 - discriminant.sqrt()) / a;
-        if t < 1e-6 {
+        if t < 1e-6 || t_max < t {
             t = (-b2 + discriminant.sqrt()) / a;
-            if t < 1e-6 {
+            if t < 1e-6 || t_max < t {
                 return None;
             }
         }

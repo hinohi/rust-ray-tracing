@@ -59,7 +59,7 @@ impl Ray {
 }
 
 pub trait Hit {
-    fn hit(&self, ray: &Ray) -> Option<HitPoint>;
+    fn hit(&self, ray: &Ray, t_max: f64) -> Option<HitPoint>;
 }
 
 #[derive(Debug, Clone)]

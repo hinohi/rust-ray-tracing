@@ -8,10 +8,12 @@ fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Object], depth: u32) -> 
     if depth == 0 {
         return BLACK;
     }
+    let mut t_max = f64::INFINITY;
     let mut hit: Option<(HitPoint, &Material)> = None;
     for o in objects.iter() {
-        if let Some(new_hit) = o.sphere.hit(&ray) {
+        if let Some(new_hit) = o.sphere.hit(&ray, t_max) {
             if !matches!(hit, Some((ref now_hit, _)) if now_hit.t <= new_hit.t) {
+                t_max = new_hit.t;
                 hit = Some((new_hit, &o.material));
             }
         }
@@ -53,7 +55,7 @@ fn random_scene<R: Rng>(rng: &mut R) -> Vec<Object> {
             }
             let r = rng.gen_range(0.0..1.0);
             let material = if r < 0.8 {
-                let color = rng.gen::<Vector>() * rng.gen::<Vector>();
+                let color = rng.gen::<Vector>() * rng.gen::<Vector>().powf(2.0);
                 Material::Lambertian { color }
             } else if r < 0.95 {
                 let color = rng.gen::<Vector>() * 0.5 + 0.5;
@@ -95,7 +97,7 @@ fn random_scene<R: Rng>(rng: &mut R) -> Vec<Object> {
 fn main() {
     let stdout = stdout();
     let mut cout = stdout.lock();
-    let mut rng = rand_pcg::Mcg128Xsl64::new(1);
+    let mut rng = rand_pcg::Mcg128Xsl64::new(7);
 
     // camera
     let camera = CameraBuilder::new()
@@ -106,9 +108,9 @@ fn main() {
         .blur(0.1);
 
     // image
-    let width = 400_u32;
+    let width = 1200_u32;
     let height = (width as f64 / camera.aspect_ratio()).floor() as u32;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 500;
     let max_depth = 50;
 
     // objects

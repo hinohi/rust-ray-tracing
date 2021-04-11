@@ -2,6 +2,10 @@
 
 これ: https://raytracing.github.io/books/RayTracingInOneWeekend.html
 
+![final](./images/final.png)
+
+2551.81秒
+
 ## Output image
 
 ![png 256x256](./images/image.png)
