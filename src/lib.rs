@@ -1,7 +1,8 @@
+#[macro_use]
+mod vector;
 mod camera;
 mod material;
 mod sphere;
-mod vector;
 
 use std::io::Write;
 

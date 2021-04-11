@@ -9,17 +9,26 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(vertical_field_of_view: f64, aspect_ratio: f64) -> Camera {
+    pub fn new(
+        look_from: Vector,
+        loot_at: Vector,
+        view_up: Vector,
+        vertical_field_of_view: f64,
+        aspect_ratio: f64,
+    ) -> Camera {
         let h = (vertical_field_of_view.to_radians() * 0.5).tan();
         let viewport_height = h * 2.0;
         let viewport_width = viewport_height * aspect_ratio;
-        let horizontal = Vector::new(viewport_width, 0.0, 0.0);
-        let vertical = Vector::new(0.0, viewport_height, 0.0);
-        let origin = Vector::new(0.0, 0.0, 0.0);
-        let lower_left_corner =
-            origin - horizontal / 2.0 - vertical / 2.0 - Vector::new(0.0, 0.0, 1.0);
+
+        let w = (look_from - loot_at).normalized();
+        let u = view_up.cross(&w);
+        let v = w.cross(&u);
+
+        let horizontal = u * viewport_width;
+        let vertical = v * viewport_height;
+        let lower_left_corner = look_from - horizontal / 2.0 - vertical / 2.0 - w;
         Camera {
-            origin,
+            origin: look_from,
             horizontal,
             vertical,
             lower_left_corner,
@@ -40,6 +49,12 @@ impl Camera {
 
 impl Default for Camera {
     fn default() -> Camera {
-        Camera::new(90.0, 16.0 / 9.0)
+        Camera::new(
+            Vector::new(0.0, 0.0, 0.0),
+            Vector::new(0.0, 0.0, -1.0),
+            Vector::new(0.0, 1.0, 0.0),
+            90.0,
+            16.0 / 9.0,
+        )
     }
 }

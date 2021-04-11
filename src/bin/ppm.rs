@@ -2,7 +2,7 @@ use std::io::{stdout, Write};
 
 use rand::Rng;
 use ray_tracing::{
-    write_color, Camera, Color, Hit, HitPoint, Material, Ray, Sphere, Vector, BLACK,
+    vec3, write_color, Camera, Color, Hit, HitPoint, Material, Ray, Sphere, Vector, BLACK,
 };
 
 fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Object], depth: u32) -> Color {
@@ -40,7 +40,13 @@ fn main() {
     let mut rng = rand_pcg::Mcg128Xsl64::new(1);
 
     // camera
-    let camera = Camera::default();
+    let camera = Camera::new(
+        vec3!(-2.0, 2.0, 1.0),
+        vec3!(0.0, 0.0, -1.0),
+        vec3!(0.0, 1.0, 0.0),
+        20.0,
+        16.0 / 9.0,
+    );
 
     // image
     let width = 400_u32;
@@ -65,19 +71,23 @@ fn main() {
 
     let world = vec![
         Object {
-            sphere: Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.0),
+            sphere: Sphere::new(vec3!(0.0, -100.5, -1.0), 100.0),
             material: material_ground,
         },
         Object {
-            sphere: Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5),
+            sphere: Sphere::new(vec3!(0.0, 0.0, -1.0), 0.5),
             material: material_a,
         },
         Object {
-            sphere: Sphere::new(Vector::new(-1.0, 0.0, -1.0), 0.5),
+            sphere: Sphere::new(vec3!(-1.0, 0.0, -1.0), 0.5),
+            material: material_b.clone(),
+        },
+        Object {
+            sphere: Sphere::new(vec3!(-1.0, 0.0, -1.0), -0.45),
             material: material_b,
         },
         Object {
-            sphere: Sphere::new(Vector::new(1.0, 0.0, -1.0), 0.5),
+            sphere: Sphere::new(vec3!(1.0, 0.0, -1.0), 0.5),
             material: material_c,
         },
     ];

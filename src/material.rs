@@ -16,8 +16,7 @@ impl Material {
     pub fn scatter<R: Rng>(&self, rng: &mut R, ray: &Ray, hit: &HitPoint) -> Option<(Ray, Color)> {
         match self {
             Material::Lambertian { color } => {
-                let random = Vector::random_in_unit_sphere(rng);
-                let mut direction = hit.normal + random / random.norm();
+                let mut direction = hit.normal + Vector::random_in_unit_sphere(rng).normalized();
                 if direction.norm_squared() < 1e-8 {
                     direction = hit.normal;
                 }
@@ -25,8 +24,7 @@ impl Material {
             }
             Material::Metal { color, fuzz } => {
                 let random = Vector::random_in_unit_sphere(rng);
-                let direction = ray.direction / ray.direction.norm();
-                let reflected = reflect(direction, hit.normal) + random * *fuzz;
+                let reflected = reflect(ray.direction.normalized(), hit.normal) + random * *fuzz;
                 if reflected.dot(&hit.normal) > 0.0 {
                     Some((Ray::new(hit.point, reflected), *color))
                 } else {
@@ -42,7 +40,7 @@ impl Material {
                 } else {
                     *index_of_refraction
                 };
-                let direction = ray.direction / ray.direction.norm();
+                let direction = ray.direction.normalized();
                 let cos = (-direction.dot(&hit.normal)).min(1.0);
                 let sin = (1.0 - cos * cos).sqrt();
                 let direction = if refraction_ratio * sin > 1.0

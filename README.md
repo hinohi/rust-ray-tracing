@@ -75,3 +75,9 @@ BUG
 ![dielectrics Schlick](./images/dielectrics_schlick.ppm)
 
 ![dielectrics Schlick](./images/dielectrics_schlick.png)
+
+## Zooming
+
+![zoom](./images/zooming.ppm)
+
+![zoom](./images/zooming.png)

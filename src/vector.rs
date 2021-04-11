@@ -94,8 +94,30 @@ impl Vector {
         self.norm_squared().sqrt()
     }
 
+    pub fn normalized(&self) -> Vector {
+        *self / self.norm()
+    }
+
     pub fn dot(&self, other: &Vector) -> f64 {
         self.0 * other.0 + self.1 * other.1 + self.2 * other.2
+    }
+
+    /// Cross production
+    ///
+    /// ## Example
+    ///
+    /// ```rust
+    /// # use ray_tracing::Vector;
+    /// let u = Vector::new(1.0, 2.0, 3.0);
+    /// let v = Vector::new(4.0, 5.0, 6.0);
+    /// assert_eq!(u.cross(&v), Vector::new(-3.0, 6.0, -3.0));
+    /// ```
+    pub fn cross(&self, other: &Vector) -> Vector {
+        Vector(
+            self.1 * other.2 - other.1 * self.2,
+            self.2 * other.0 - other.2 * self.0,
+            self.0 * other.1 - other.0 * self.1,
+        )
     }
 
     pub fn random_in_unit_sphere<R: Rng>(rng: &mut R) -> Vector {
@@ -112,4 +134,14 @@ impl Distribution<Vector> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Vector {
         Vector(rng.gen(), rng.gen(), rng.gen())
     }
+}
+
+#[macro_export]
+macro_rules! vec3 {
+    ($x:expr, $y:expr, $z:expr) => {
+        Vector::new($x, $y, $z)
+    };
+    ($v:expr) => {
+        Vector::new($v, $v, $v)
+    };
 }
