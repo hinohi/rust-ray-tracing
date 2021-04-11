@@ -1,10 +1,12 @@
 mod camera;
+mod material;
 mod sphere;
 mod vector;
 
 use std::io::Write;
 
 pub use crate::camera::*;
+pub use crate::material::*;
 pub use crate::sphere::*;
 pub use crate::vector::*;
 

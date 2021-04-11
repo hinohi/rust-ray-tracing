@@ -52,3 +52,8 @@ BUG
 
 ![Lambertian spheres](./images/lambertian_spheres.png)
 
+## Metal (impl Material)
+
+![metal](./images/metal.ppm)
+
+![metal](./images/metal.png)

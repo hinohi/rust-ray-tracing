@@ -39,7 +39,7 @@ impl Hit for Sphere {
         let a = ray.direction.norm_squared();
         let b2 = ray.direction.dot(&co);
         let c = co.norm_squared() - self.radius * self.radius;
-        let discriminant = b2 * b2 - a * c;
+        let discriminant = b2.powi(2) - a * c;
         if discriminant < 0.0 {
             return None;
         }

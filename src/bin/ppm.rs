@@ -1,21 +1,37 @@
 use std::io::{stdout, Write};
 
 use rand::Rng;
-use ray_tracing::{write_color, Camera, Color, Hit, Ray, Sphere, Vector, BLACK};
+use ray_tracing::{
+    write_color, Camera, Color, Hit, HitPoint, Material, Ray, Sphere, Vector, BLACK,
+};
 
-fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Sphere], depth: u32) -> Color {
+fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Object], depth: u32) -> Color {
     if depth == 0 {
         return BLACK;
     }
+    let mut hit: Option<(HitPoint, &Material)> = None;
     for o in objects.iter() {
-        if let Some(h) = o.hit(&ray) {
-            let random = Vector::random_in_unit_sphere(rng);
-            let target = h.point + h.normal + random / random.norm();
-            let ray = Ray::new(h.point, target - h.point);
-            return ray_color(rng, &ray, objects, depth - 1) * 0.5;
+        if let Some(new_hit) = o.sphere.hit(&ray) {
+            if !matches!(hit, Some((ref now_hit, _)) if now_hit.t <= new_hit.t) {
+                hit = Some((new_hit, &o.material));
+            }
         }
     }
-    ray.background()
+    if let Some((hit, mate)) = hit {
+        if let Some((ray, attenuation)) = mate.scatter(rng, &ray, &hit) {
+            attenuation * ray_color(rng, &ray, objects, depth - 1)
+        } else {
+            BLACK
+        }
+    } else {
+        ray.background()
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Object {
+    sphere: Sphere,
+    material: Material,
 }
 
 fn main() {
@@ -33,9 +49,28 @@ fn main() {
     let max_depth = 50;
 
     // objects
+    let material_ground = Material::Lambertian(Color::new(0.8, 0.8, 0.0));
+    let material_a = Material::Lambertian(Color::new(0.7, 0.3, 0.3));
+    let material_b = Material::Metal(Color::new(0.8, 0.8, 0.8));
+    let material_c = Material::Metal(Color::new(0.8, 0.6, 0.2));
+
     let world = vec![
-        Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5),
-        Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.0),
+        Object {
+            sphere: Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.0),
+            material: material_ground,
+        },
+        Object {
+            sphere: Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5),
+            material: material_a,
+        },
+        Object {
+            sphere: Sphere::new(Vector::new(-1.0, 0.0, -1.0), 0.5),
+            material: material_b,
+        },
+        Object {
+            sphere: Sphere::new(Vector::new(1.0, 0.0, -1.0), 0.5),
+            material: material_c,
+        },
     ];
 
     // render
