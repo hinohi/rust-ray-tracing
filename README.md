@@ -69,3 +69,9 @@ BUG
 ![dielectrics](./images/dielectrics.ppm)
 
 ![dielectrics](./images/dielectrics.png)
+
+## Glass with Schlick Approximation
+
+![dielectrics Schlick](./images/dielectrics_schlick.ppm)
+
+![dielectrics Schlick](./images/dielectrics_schlick.png)

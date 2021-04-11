@@ -45,7 +45,9 @@ impl Material {
                 let direction = ray.direction / ray.direction.norm();
                 let cos = (-direction.dot(&hit.normal)).min(1.0);
                 let sin = (1.0 - cos * cos).sqrt();
-                let direction = if refraction_ratio * sin > 1.0 {
+                let direction = if refraction_ratio * sin > 1.0
+                    || reflectance(cos, refraction_ratio) > rng.gen()
+                {
                     reflect(direction, hit.normal)
                 } else {
                     refract(direction, hit.normal, refraction_ratio)
@@ -65,4 +67,11 @@ fn refract(uv: Vector, n: Vector, refraction_ratio: f64) -> Vector {
     let r_out_prep = (uv + n * cos) * refraction_ratio;
     let r_out_parallel = n * (1.0 - r_out_prep.norm_squared()).abs().sqrt();
     r_out_prep - r_out_parallel
+}
+
+/// Schlick Approximation
+fn reflectance(cos: f64, ref_idx: f64) -> f64 {
+    let r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+    let r0 = r0 * r0;
+    r0 + (1.0 - r0) * (1.0 - cos).powi(5)
 }
