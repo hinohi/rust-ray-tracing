@@ -1,5 +1,10 @@
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+use rand::{
+    distributions::{Distribution, Standard},
+    Rng,
+};
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vector(f64, f64, f64);
 
@@ -91,5 +96,20 @@ impl Vector {
 
     pub fn dot(&self, other: &Vector) -> f64 {
         self.0 * other.0 + self.1 * other.1 + self.2 * other.2
+    }
+
+    pub fn random_in_unit_sphere<R: Rng>(rng: &mut R) -> Vector {
+        loop {
+            let v = rng.gen::<Vector>() * 2.0 - Vector(1.0, 1.0, 1.0);
+            if v.norm_squared() <= 1.0 {
+                break v;
+            }
+        }
+    }
+}
+
+impl Distribution<Vector> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Vector {
+        Vector(rng.gen(), rng.gen(), rng.gen())
     }
 }

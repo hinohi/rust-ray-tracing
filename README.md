@@ -31,3 +31,9 @@
 ![antialiasing by sampling](./images/pixel_sample.ppm)
 
 ![antialiasing by sampling](./images/pixel_sample.png)
+
+## Diffuse
+
+![diffuse](./images/diffuse.ppm)
+
+![diffuse](./images/diffuse.png)
