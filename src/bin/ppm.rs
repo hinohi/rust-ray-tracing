@@ -1,9 +1,8 @@
 use std::io::{stdout, Write};
 
 use rand::Rng;
-use ray_tracing::{
-    vec3, write_color, Camera, Color, Hit, HitPoint, Material, Ray, Sphere, Vector, BLACK,
-};
+
+use ray_tracing::*;
 
 fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Object], depth: u32) -> Color {
     if depth == 0 {
@@ -40,13 +39,10 @@ fn main() {
     let mut rng = rand_pcg::Mcg128Xsl64::new(1);
 
     // camera
-    let camera = Camera::new(
-        vec3!(-2.0, 2.0, 1.0),
-        vec3!(0.0, 0.0, -1.0),
-        vec3!(0.0, 1.0, 0.0),
-        20.0,
-        16.0 / 9.0,
-    );
+    let camera = CameraBuilder::new()
+        .look_from(vec3!(3.0, 3.0, 2.0))
+        .vertical_field_of_view(20.0)
+        .blur(2.0);
 
     // image
     let width = 400_u32;
@@ -102,7 +98,7 @@ fn main() {
             for _ in 0..samples_per_pixel {
                 let u = (x as f64 + rng.gen::<f64>()) / (width as f64 - 1.0);
                 let v = (y as f64 + rng.gen::<f64>()) / (height as f64 - 1.0);
-                let ray = camera.get_ray(u, v);
+                let ray = camera.get_ray(&mut rng, u, v);
                 color += ray_color(&mut rng, &ray, &world, max_depth);
             }
             write_color(&mut cout, color / samples_per_pixel as f64).unwrap()

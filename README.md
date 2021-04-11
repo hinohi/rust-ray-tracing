@@ -81,3 +81,9 @@ BUG
 ![zoom](./images/zooming.ppm)
 
 ![zoom](./images/zooming.png)
+
+## Blur
+
+![blur](./images/background.ppm)
+
+![blur](./images/background.png)
