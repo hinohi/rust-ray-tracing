@@ -51,8 +51,14 @@ fn main() {
     // objects
     let material_ground = Material::Lambertian(Color::new(0.8, 0.8, 0.0));
     let material_a = Material::Lambertian(Color::new(0.7, 0.3, 0.3));
-    let material_b = Material::Metal(Color::new(0.8, 0.8, 0.8));
-    let material_c = Material::Metal(Color::new(0.8, 0.6, 0.2));
+    let material_b = Material::Metal {
+        color: Color::new(0.8, 0.8, 0.8),
+        fuzz: 0.3,
+    };
+    let material_c = Material::Metal {
+        color: Color::new(0.8, 0.6, 0.2),
+        fuzz: 1.0,
+    };
 
     let world = vec![
         Object {

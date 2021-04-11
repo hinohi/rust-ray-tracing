@@ -7,7 +7,7 @@ pub enum Material {
     /// Lambertian reflectance
     Lambertian(Color),
     /// Metal
-    Metal(Color),
+    Metal { color: Color, fuzz: f64 },
 }
 
 impl Material {
@@ -21,9 +21,10 @@ impl Material {
                 }
                 Some((Ray::new(hit.point, direction), *color))
             }
-            Material::Metal(color) => {
+            Material::Metal { color, fuzz } => {
                 let direction = ray.direction / ray.direction.norm();
-                let reflected = direction - hit.normal * (direction.dot(&hit.normal) * 2.0);
+                let reflected = direction - hit.normal * (direction.dot(&hit.normal) * 2.0)
+                    + Vector::random_in_unit_sphere(rng) * *fuzz;
                 if reflected.dot(&hit.normal) > 0.0 {
                     Some((Ray::new(hit.point, reflected), *color))
                 } else {

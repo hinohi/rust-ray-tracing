@@ -57,3 +57,9 @@ BUG
 ![metal](./images/metal.ppm)
 
 ![metal](./images/metal.png)
+
+## Metal material fuzziness
+
+![metal](./images/metal_fuzz.ppm)
+
+![metal](./images/metal_fuzz.png)
