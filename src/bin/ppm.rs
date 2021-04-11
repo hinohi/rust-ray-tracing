@@ -26,7 +26,10 @@ fn main() {
     let samples_per_pixel = 100;
 
     // objects
-    let world = vec![Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5)];
+    let world = vec![
+        Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5),
+        Sphere::new(Vector::new(0.0, -100.5, -1.0), 100.0),
+    ];
 
     // render
     writeln!(cout, "P3").unwrap();

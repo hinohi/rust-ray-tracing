@@ -99,7 +99,7 @@ impl Hit for Sphere {
     ///
     /// Note: $\vec{D}\cdot\overrightarrow{CO} < 0$
     fn hit(&self, ray: &Ray) -> Option<HitPoint> {
-        let co = self.center - ray.origin;
+        let co = ray.origin - self.center;
         let a = ray.direction.norm_squared();
         let b2 = ray.direction.dot(&co);
         let c = co.norm_squared() - self.radius * self.radius;
@@ -107,7 +107,13 @@ impl Hit for Sphere {
         if discriminant < 0.0 {
             return None;
         }
-        let t = (-b2 - discriminant.sqrt()) / a;
+        let mut t = (-b2 - discriminant.sqrt()) / a;
+        if t < 0.0 {
+            t = (-b2 + discriminant.sqrt()) / a;
+            if t < 0.0 {
+                return None;
+            }
+        }
         let point = ray.at(t);
         let normal = (point - self.center) / self.radius;
         if ray.direction.dot(&normal) <= 0.0 {
