@@ -1,6 +1,6 @@
 use std::io::{stdout, Write};
 
-use ray_tracing::{write_color, Ray, Sphere, Vector, RED};
+use ray_tracing::{write_color, Color, Ray, Sphere, Vector};
 
 fn main() {
     let stdout = stdout();
@@ -37,8 +37,9 @@ fn main() {
                 origin,
                 lower_left_corner + horizontal * u + vertical * v - origin,
             );
-            if sphere.is_hit(&r) {
-                write_color(&mut cout, &RED).unwrap();
+            if let Some(p) = sphere.hit_point(&r) {
+                let c = sphere.normal(p) * 0.5 + Color::new(0.5, 0.5, 0.5);
+                write_color(&mut cout, &c).unwrap();
             } else {
                 write_color(&mut cout, &r.background()).unwrap();
             }

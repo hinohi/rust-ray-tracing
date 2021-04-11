@@ -39,6 +39,10 @@ impl Ray {
         Ray { origin, direction }
     }
 
+    pub fn at(&self, t: f64) -> Vector {
+        self.origin + self.direction * t
+    }
+
     pub fn background(&self) -> Color {
         let t = (self.direction.y() / self.direction.norm() + 1.0) * 0.5;
         Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
@@ -56,7 +60,7 @@ impl Sphere {
         Sphere { center, radius }
     }
 
-    /// Calculate if the ray will hit the sphere
+    /// Calculate a hit point between given ray and this sphere
     ///
     /// Ray $\vec{R}(t) = \vec{O} + t\vec{D}$,
     /// center of sphere $\vec{C}$, radius of sphere $r$, then
@@ -69,14 +73,29 @@ impl Sphere {
     /// \end{aligned}
     /// $$
     ///
-    /// Since this is a simple quadratic equation,we can use
-    /// the discriminant formula to determine the presence or absence of a root.
-    pub fn is_hit(&self, ray: &Ray) -> bool {
+    /// Since this is a simple quadratic equation, just solve it.
+    ///
+    /// In general, a ray and a sphere intersect at two points.
+    /// Since we take the z-direction to be from-to-front of the screen,
+    /// the intersection point on the side visible to the camera is the
+    /// side with the smaller t.
+    ///
+    /// Note: $\vec{D}\cdot\overrightarrow{CO} < 0$
+    pub fn hit_point(&self, ray: &Ray) -> Option<Vector> {
         let co = self.center - ray.origin;
         let a = ray.direction.norm_squared();
         let b2 = ray.direction.dot(&co);
         let c = co.norm_squared() - self.radius * self.radius;
         let discriminant = b2 * b2 - a * c;
-        discriminant > 0.0
+        if discriminant < 0.0 {
+            None
+        } else {
+            Some(ray.at((-b2 - discriminant.sqrt()) / a))
+        }
+    }
+
+    pub fn normal(&self, p: Vector) -> Vector {
+        let n = p - self.center;
+        n / n.norm()
     }
 }

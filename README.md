@@ -19,3 +19,9 @@
 ![red sphere](./images/red_sphere.ppm)
 
 ![red sphere](./images/red_sphere.png)
+
+## Sphere colored according to its normal vectors
+
+![color by normal](./images/normal.ppm)
+
+![color by normal](./images/normal.png)
