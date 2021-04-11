@@ -49,15 +49,18 @@ fn main() {
     let max_depth = 50;
 
     // objects
-    let material_ground = Material::Lambertian(Color::new(0.8, 0.8, 0.0));
-    let material_a = Material::Lambertian(Color::new(0.7, 0.3, 0.3));
-    let material_b = Material::Metal {
-        color: Color::new(0.8, 0.8, 0.8),
-        fuzz: 0.3,
+    let material_ground = Material::Lambertian {
+        color: Color::new(0.8, 0.8, 0.0),
+    };
+    let material_a = Material::Lambertian {
+        color: Color::new(0.1, 0.2, 0.5),
+    };
+    let material_b = Material::Dielectric {
+        index_of_refraction: 1.5,
     };
     let material_c = Material::Metal {
         color: Color::new(0.8, 0.6, 0.2),
-        fuzz: 1.0,
+        fuzz: 0.01,
     };
 
     let world = vec![

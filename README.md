@@ -63,3 +63,9 @@ BUG
 ![metal](./images/metal_fuzz.ppm)
 
 ![metal](./images/metal_fuzz.png)
+
+## Glass sphere that sometimes refracts
+
+![dielectrics](./images/dielectrics.ppm)
+
+![dielectrics](./images/dielectrics.png)
