@@ -1,29 +1,32 @@
 use std::io::{stdout, Write};
 
-use ray_tracing::{write_color, Hit, Ray, Sphere, Vector, WHITE};
+use rand::Rng;
+use ray_tracing::{write_color, Camera, Color, Hit, Ray, Sphere, Vector, WHITE};
+
+fn ray_color(ray: &Ray, objects: &[Sphere]) -> Color {
+    for o in objects.iter() {
+        if let Some(h) = o.hit(&ray) {
+            return (h.normal + WHITE) * 0.5;
+        }
+    }
+    ray.background()
+}
 
 fn main() {
     let stdout = stdout();
     let mut cout = stdout.lock();
-
-    // image
-    let aspect_ratio = 16.0 / 9.0;
-    let width = 400_u32;
-    let height = (width as f64 / aspect_ratio).floor() as u32;
+    let mut rng = rand_pcg::Mcg128Xsl64::new(1);
 
     // camera
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
+    let camera = Camera::default();
 
-    let origin = Vector::new(0.0, 0.0, 0.0);
-    let horizontal = Vector::new(viewport_width, 0.0, 0.0);
-    let vertical = Vector::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
-        origin - horizontal / 2.0 - vertical / 2.0 - Vector::new(0.0, 0.0, focal_length);
+    // image
+    let width = 400_u32;
+    let height = (width as f64 / camera.aspect_ratio()).floor() as u32;
+    let samples_per_pixel = 100;
 
     // objects
-    let sphere = Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5);
+    let world = vec![Sphere::new(Vector::new(0.0, 0.0, -1.0), 0.5)];
 
     // render
     writeln!(cout, "P3").unwrap();
@@ -31,18 +34,14 @@ fn main() {
     writeln!(cout, "255").unwrap();
     for y in (0..height).rev() {
         for x in 0..width {
-            let u = x as f64 / (width as f64 - 1.0);
-            let v = y as f64 / (height as f64 - 1.0);
-            let r = Ray::new(
-                origin,
-                lower_left_corner + horizontal * u + vertical * v - origin,
-            );
-            if let Some(h) = sphere.hit(&r) {
-                let c = (h.normal + WHITE) * 0.5;
-                write_color(&mut cout, &c).unwrap();
-            } else {
-                write_color(&mut cout, &r.background()).unwrap();
+            let mut color = Color::new(0.0, 0.0, 0.0);
+            for _ in 0..samples_per_pixel {
+                let u = (x as f64 + rng.gen::<f64>()) / (width as f64 - 1.0);
+                let v = (y as f64 + rng.gen::<f64>()) / (height as f64 - 1.0);
+                let ray = camera.get_ray(u, v);
+                color += ray_color(&ray, &world)
             }
+            write_color(&mut cout, color / samples_per_pixel as f64).unwrap()
         }
     }
 }

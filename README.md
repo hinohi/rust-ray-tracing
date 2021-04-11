@@ -25,3 +25,9 @@
 ![color by normal](./images/normal.ppm)
 
 ![color by normal](./images/normal.png)
+
+## Antialiasing by sampling
+
+![antialiasing by sampling](./images/pixel_sample.ppm)
+
+![antialiasing by sampling](./images/pixel_sample.png)

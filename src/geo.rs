@@ -1,4 +1,4 @@
-use core::ops::{Add, Div, Mul, Neg, Sub};
+use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vector(f64, f64, f64);
@@ -32,6 +32,30 @@ impl_bin_op!(Add, add);
 impl_bin_op!(Sub, sub);
 impl_bin_op!(Mul, mul);
 impl_bin_op!(Div, div);
+
+macro_rules! impl_assign {
+    ($trait_name:ident, $method_name:ident) => {
+        impl $trait_name for Vector {
+            fn $method_name(&mut self, rhs: Vector) {
+                (self.0).$method_name(rhs.0);
+                (self.1).$method_name(rhs.1);
+                (self.2).$method_name(rhs.2);
+            }
+        }
+        impl $trait_name<f64> for Vector {
+            fn $method_name(&mut self, rhs: f64) {
+                (self.0).$method_name(rhs);
+                (self.1).$method_name(rhs);
+                (self.2).$method_name(rhs);
+            }
+        }
+    };
+}
+
+impl_assign!(AddAssign, add_assign);
+impl_assign!(SubAssign, sub_assign);
+impl_assign!(MulAssign, mul_assign);
+impl_assign!(DivAssign, div_assign);
 
 impl Neg for Vector {
     type Output = Vector;

@@ -1,7 +1,9 @@
+mod camera;
 mod geo;
 
 use std::io::Write;
 
+pub use crate::camera::*;
 pub use crate::geo::*;
 
 pub type Color = Vector;
@@ -18,7 +20,7 @@ pub fn cast_pixel(v: f64) -> u8 {
     }
 }
 
-pub fn write_color<W: Write>(writer: &mut W, color: &Color) -> std::io::Result<()> {
+pub fn write_color<W: Write>(writer: &mut W, color: Color) -> std::io::Result<()> {
     writeln!(
         writer,
         "{} {} {}",
