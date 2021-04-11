@@ -1,4 +1,4 @@
-use core::ops::{Add, Div, Mul, Sub};
+use core::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vector(f64, f64, f64);
@@ -32,6 +32,13 @@ impl_bin_op!(Add, add);
 impl_bin_op!(Sub, sub);
 impl_bin_op!(Mul, mul);
 impl_bin_op!(Div, div);
+
+impl Neg for Vector {
+    type Output = Vector;
+    fn neg(self) -> Vector {
+        Vector(-self.0, -self.1, -self.2)
+    }
+}
 
 impl Vector {
     pub const fn new(x: f64, y: f64, z: f64) -> Vector {

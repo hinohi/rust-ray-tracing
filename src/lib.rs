@@ -5,6 +5,7 @@ use std::io::Write;
 pub use crate::geo::*;
 
 pub type Color = Vector;
+pub const WHITE: Color = Color::new(1.0, 1.0, 1.0);
 pub const RED: Color = Color::new(1.0, 0.0, 0.0);
 
 pub fn cast_pixel(v: f64) -> u8 {
@@ -49,6 +50,18 @@ impl Ray {
     }
 }
 
+pub trait Hit {
+    fn hit(&self, ray: &Ray) -> Option<HitPoint>;
+}
+
+#[derive(Debug, Clone)]
+pub struct HitPoint {
+    pub point: Vector,
+    pub normal: Vector,
+    pub t: f64,
+    pub front_face: bool,
+}
+
 #[derive(Debug, Clone)]
 pub struct Sphere {
     center: Vector,
@@ -59,7 +72,9 @@ impl Sphere {
     pub const fn new(center: Vector, radius: f64) -> Sphere {
         Sphere { center, radius }
     }
+}
 
+impl Hit for Sphere {
     /// Calculate a hit point between given ray and this sphere
     ///
     /// Ray $\vec{R}(t) = \vec{O} + t\vec{D}$,
@@ -81,21 +96,32 @@ impl Sphere {
     /// side with the smaller t.
     ///
     /// Note: $\vec{D}\cdot\overrightarrow{CO} < 0$
-    pub fn hit_point(&self, ray: &Ray) -> Option<Vector> {
+    fn hit(&self, ray: &Ray) -> Option<HitPoint> {
         let co = self.center - ray.origin;
         let a = ray.direction.norm_squared();
         let b2 = ray.direction.dot(&co);
         let c = co.norm_squared() - self.radius * self.radius;
         let discriminant = b2 * b2 - a * c;
         if discriminant < 0.0 {
-            None
-        } else {
-            Some(ray.at((-b2 - discriminant.sqrt()) / a))
+            return None;
         }
-    }
-
-    pub fn normal(&self, p: Vector) -> Vector {
-        let n = p - self.center;
-        n / n.norm()
+        let t = (-b2 - discriminant.sqrt()) / a;
+        let point = ray.at(t);
+        let normal = (point - self.center) / self.radius;
+        if ray.direction.dot(&normal) <= 0.0 {
+            Some(HitPoint {
+                point,
+                normal,
+                t,
+                front_face: true,
+            })
+        } else {
+            Some(HitPoint {
+                point,
+                normal: -normal,
+                t,
+                front_face: false,
+            })
+        }
     }
 }
