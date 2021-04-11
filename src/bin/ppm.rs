@@ -33,6 +33,65 @@ pub struct Object {
     material: Material,
 }
 
+fn random_scene<R: Rng>(rng: &mut R) -> Vec<Object> {
+    let mut objects = Vec::new();
+    objects.push(Object {
+        sphere: Sphere::new(vec3!(0.0, -1000.0, 0.0), 1000.0),
+        material: Material::Lambertian {
+            color: Color::new(0.5, 0.5, 0.5),
+        },
+    });
+    for a in -11..11 {
+        for b in -11..11 {
+            let center = vec3!(
+                a as f64 + rng.gen_range(0.0..0.9),
+                0.2,
+                b as f64 + rng.gen_range(0.0..0.9)
+            );
+            if (center - vec3!(4.0, 0.2, 0.0)).norm() < 0.9 {
+                continue;
+            }
+            let r = rng.gen_range(0.0..1.0);
+            let material = if r < 0.8 {
+                let color = rng.gen::<Vector>() * rng.gen::<Vector>();
+                Material::Lambertian { color }
+            } else if r < 0.95 {
+                let color = rng.gen::<Vector>() * 0.5 + 0.5;
+                let fuzz = rng.gen_range(0.0..0.5);
+                Material::Metal { color, fuzz }
+            } else {
+                Material::Dielectric {
+                    index_of_refraction: 1.5,
+                }
+            };
+            objects.push(Object {
+                sphere: Sphere::new(center, 0.2),
+                material,
+            });
+        }
+    }
+    objects.push(Object {
+        sphere: Sphere::new(vec3!(0.0, 1.0, 0.0), 1.0),
+        material: Material::Dielectric {
+            index_of_refraction: 1.5,
+        },
+    });
+    objects.push(Object {
+        sphere: Sphere::new(vec3!(-4.0, 1.0, 0.0), 1.0),
+        material: Material::Lambertian {
+            color: Color::new(0.4, 0.2, 0.1),
+        },
+    });
+    objects.push(Object {
+        sphere: Sphere::new(vec3!(4.0, 1.0, 0.0), 1.0),
+        material: Material::Metal {
+            color: Color::new(0.7, 0.6, 0.5),
+            fuzz: 0.0,
+        },
+    });
+    objects
+}
+
 fn main() {
     let stdout = stdout();
     let mut cout = stdout.lock();
@@ -40,9 +99,11 @@ fn main() {
 
     // camera
     let camera = CameraBuilder::new()
-        .look_from(vec3!(3.0, 3.0, 2.0))
+        .look_from(vec3!(13.0, 2.0, 3.0))
+        .loot_at(vec3!(0.0))
         .vertical_field_of_view(20.0)
-        .blur(2.0);
+        .aspect_ratio(3.0 / 2.0)
+        .blur(0.1);
 
     // image
     let width = 400_u32;
@@ -51,42 +112,7 @@ fn main() {
     let max_depth = 50;
 
     // objects
-    let material_ground = Material::Lambertian {
-        color: Color::new(0.8, 0.8, 0.0),
-    };
-    let material_a = Material::Lambertian {
-        color: Color::new(0.1, 0.2, 0.5),
-    };
-    let material_b = Material::Dielectric {
-        index_of_refraction: 1.5,
-    };
-    let material_c = Material::Metal {
-        color: Color::new(0.8, 0.6, 0.2),
-        fuzz: 0.01,
-    };
-
-    let world = vec![
-        Object {
-            sphere: Sphere::new(vec3!(0.0, -100.5, -1.0), 100.0),
-            material: material_ground,
-        },
-        Object {
-            sphere: Sphere::new(vec3!(0.0, 0.0, -1.0), 0.5),
-            material: material_a,
-        },
-        Object {
-            sphere: Sphere::new(vec3!(-1.0, 0.0, -1.0), 0.5),
-            material: material_b.clone(),
-        },
-        Object {
-            sphere: Sphere::new(vec3!(-1.0, 0.0, -1.0), -0.45),
-            material: material_b,
-        },
-        Object {
-            sphere: Sphere::new(vec3!(1.0, 0.0, -1.0), 0.5),
-            material: material_c,
-        },
-    ];
+    let world = random_scene(&mut rng);
 
     // render
     writeln!(cout, "P3").unwrap();
@@ -103,5 +129,6 @@ fn main() {
             }
             write_color(&mut cout, color / samples_per_pixel as f64).unwrap()
         }
+        eprintln!("{}/{}", y, height);
     }
 }
