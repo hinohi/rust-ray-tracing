@@ -84,6 +84,6 @@ BUG
 
 ## Blur
 
-![blur](./images/background.ppm)
+![blur](./images/blur.ppm)
 
-![blur](./images/background.png)
+![blur](./images/blur.png)
