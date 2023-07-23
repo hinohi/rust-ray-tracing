@@ -11,7 +11,7 @@ fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Object], depth: u32) -> 
     let mut t_max = f64::INFINITY;
     let mut hit: Option<(HitPoint, &Material)> = None;
     for o in objects.iter() {
-        if let Some(new_hit) = o.sphere.hit(&ray, t_max) {
+        if let Some(new_hit) = o.sphere.hit(ray, t_max) {
             if !matches!(hit, Some((ref now_hit, _)) if now_hit.t <= new_hit.t) {
                 t_max = new_hit.t;
                 hit = Some((new_hit, &o.material));
@@ -19,7 +19,7 @@ fn ray_color<R: Rng>(rng: &mut R, ray: &Ray, objects: &[Object], depth: u32) -> 
         }
     }
     if let Some((hit, mate)) = hit {
-        if let Some((ray, attenuation)) = mate.scatter(rng, &ray, &hit) {
+        if let Some((ray, attenuation)) = mate.scatter(rng, ray, &hit) {
             attenuation * ray_color(rng, &ray, objects, depth - 1)
         } else {
             BLACK

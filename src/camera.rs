@@ -33,6 +33,12 @@ pub struct CameraBuilder {
     aspect_ratio: f64,
 }
 
+impl Default for CameraBuilder {
+    fn default() -> CameraBuilder {
+        CameraBuilder::new()
+    }
+}
+
 impl CameraBuilder {
     pub fn new() -> CameraBuilder {
         CameraBuilder {
@@ -131,14 +137,30 @@ pub struct FiniteApertureCamera {
 }
 
 pub trait Camera {
-    fn aspect_ratio(&self) -> f64;
+    fn horizontal(&self) -> Vector;
+
+    fn vertical(&self) -> Vector;
+
+    fn lower_left_corner(&self) -> Vector;
+
+    fn aspect_ratio(&self) -> f64 {
+        self.horizontal().norm() / self.vertical().norm()
+    }
 
     fn get_ray<R: Rng>(&self, rng: &mut R, u: f64, v: f64) -> Ray;
 }
 
 impl Camera for PinHoleCamera {
-    fn aspect_ratio(&self) -> f64 {
-        self.horizontal.norm() / self.vertical.norm()
+    fn horizontal(&self) -> Vector {
+        self.horizontal
+    }
+
+    fn vertical(&self) -> Vector {
+        self.vertical
+    }
+
+    fn lower_left_corner(&self) -> Vector {
+        self.lower_left_corner
     }
 
     fn get_ray<R: Rng>(&self, _: &mut R, u: f64, v: f64) -> Ray {
@@ -150,8 +172,16 @@ impl Camera for PinHoleCamera {
 }
 
 impl Camera for FiniteApertureCamera {
-    fn aspect_ratio(&self) -> f64 {
-        self.horizontal.norm() / self.vertical.norm()
+    fn horizontal(&self) -> Vector {
+        self.horizontal
+    }
+
+    fn vertical(&self) -> Vector {
+        self.vertical
+    }
+
+    fn lower_left_corner(&self) -> Vector {
+        self.lower_left_corner
     }
 
     fn get_ray<R: Rng>(&self, rng: &mut R, u: f64, v: f64) -> Ray {
